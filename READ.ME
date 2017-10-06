@@ -1,0 +1,73 @@
+This is a Spring web application. You can compile this to a war file and deploy to your favorite web server.
+The API's are:
+POST rest/login
+	The body needs to have a JSON structure:
+	{
+	  username: <username>
+	  password: <password>
+	}
+	It returns a JSON structure in the body:
+	{
+	  error: <some string> or "ok"
+	  jwt: <a JSON web token> or null
+	}
+
+GET rest/get_all
+	No body required. However, a header of "Authorization: <jwt token>" is required
+	A JSON object is returned, which is an array of employee structures
+		
+GET rest/get_emp?id={#}
+	No body required. However, a header of "Authorization: <jwt token>" is required
+	A JSON object is returned in the body, which is a single employee record
+	
+POST rest/add_emp
+POST rest/update_emp
+	A header of "Authorization: <jwt token>" is required
+	The entire Employee record as a JSON object in the body:
+	{
+		"id": "5",
+		"firstName": "John",
+		"lastName": "Doe",
+		"dateOfBirth": "1990-12-25",
+		"dateOfEmployment": "2000-01-01",
+		"bStatus": "ACTIVE",   (or "INACTIVE")
+		"username": "kenzanadu"
+	}
+	Obviously if it's an add, don't bother setting the id. It won't be carried over.
+	Both APIs will return a JSON object in the body:
+	{
+		error: <some string> or "ok"
+		id: <id of the inserted record, 0 for an update or an error>
+	}
+	
+GET rest/delete_emp?id={#}
+	A header of "Authorization: <jwt token>" is required
+	No body is required
+	It returns a JSON object in the body:
+	{
+		error: <some string> or "ok"
+		id: 0
+	}
+
+In some cases, if you send an invalid authorization token, it will return an XML (HTML) 403 response. Thus, if you fail to
+receive a valid JSON response, you can either check the response code, or you can safely assume you did not have authorization.
+
+Once you have the server up and running, you can run "TestRest.java" as a JUnit test and it should pass.
+
+initial.sql contains the database initialization. Obviously you don't have to insert all of the users,
+they are added to test the application.
+
+However, internally, the code requires "ROLE_ADD_EMP", "ROLE_UPDATE_EMP", and "ROLE_DELETE_EMP"
+in order for users to be able to perform the operations. Just existing in the database is enough for the "login" and both "get" APIs.
+If a user is not assigned to one or more of those roles in the database, he or she will not be able to execute the APIs.
+
+The properties file: It's named "kenzan.properties", and requires the following properties:
+	kenzan.jwt.signing.key=<A random string of data for signing the JSON web token>
+	kenzan.jwt.issuer=<The issuer field of the JWT>
+	kenzan.jwt.expiration.minutes=<The number of minutes before the token expires>
+	datasource.driver.class.name=<The database driver for hibernate>
+	datasource.url=<The database url for hibernate>
+	datasource.username=<The username for the database>
+	datasource.password=<And the password for the database> // The code should be changed to get this information from a password server
+Place your properties file anywhere in your web server that is part of the applications classpath. For testing, I put mine into
+WEB-INF/classes/kenzan.properties
