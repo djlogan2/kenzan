@@ -45,13 +45,11 @@ public class JwtAuthentication implements Authentication {
 
 	@Override
 	public Object getDetails() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object getPrincipal() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

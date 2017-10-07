@@ -1,6 +1,5 @@
 package david.logan.kenzan.server;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -51,10 +50,10 @@ public class AppConfigXML {
 
 	private DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(properties.getProperty("datasource.driver.class.name")); //"com.mysql.jdbc.Driver");
-		dataSource.setUrl(properties.getProperty("datasource.url")); //"jdbc:mysql://192.168.1.69:3306/kenzan");
-		dataSource.setUsername(properties.getProperty("datasource.username")); //"david");
-		dataSource.setPassword(properties.getProperty("datasource.password")); //"ca014dedjl");
+		dataSource.setDriverClassName(properties.getProperty("datasource.driver.class.name")); // sigh :)
+		dataSource.setUrl(properties.getProperty("datasource.url"));
+		dataSource.setUsername(properties.getProperty("datasource.username"));
+		dataSource.setPassword(properties.getProperty("datasource.password"));
 		return dataSource;
 	}
 
