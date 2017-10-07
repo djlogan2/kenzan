@@ -61,7 +61,6 @@ public class SecurityConfigXML extends WebSecurityConfigurerAdapter {
 		http
         .csrf().disable() // We don't need CSRF for JWT based authentication
         .exceptionHandling()
-        //.authenticationEntryPoint(this.authenticationEntryPoint)
         .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
