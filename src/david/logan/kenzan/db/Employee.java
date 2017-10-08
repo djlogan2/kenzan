@@ -28,10 +28,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 //	I allowed the username field to be added and updated from the endpoint APIs, mostly because I am disallowing a blank username in the database.
 //		Password can be null. The user can also have no roles.
 //
-//	TODO: In the "KenzanRestClient" class, Jackson is ignoring the @JsonFormat annotations for the fields below, and serializing the dates incorrectly
-//			to UTC rather than "America/Denver". Still needs to be fixed. Jackson performs perfectly in the DAO layer here in the server, so I really
-//			have no idea why it doesn't work in the client (yet.)
-//
 @Table(name="employee")
 @Entity
 public class Employee {
