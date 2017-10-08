@@ -1,18 +1,28 @@
 package david.logan.kenzan.db;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 //
-// Status values of 0 and 1 are hard coded and assumed
+//	The standard DAO layer. Nothing special here really.
+//	You can tell that the code regards a database bStatus=Status.INACTIVE as deleted.
+//	There is currently no way for the DAO layer to ever return an INACTIVE record.
+//
+//	The code does make sure that there is only one ACTIVE record with a particular username.
+//	In the original MySQL sql statements to build the database, I also added insert and update
+//	triggers to ensure it as well, so if you are using the triggers, it's just an extra
+//	check to ensure we never have a duplicate ACTIVE username. We can have as many duplicate
+//	INACTIVE usernames as we wish.
 //
 
 @Repository
@@ -80,9 +90,15 @@ public class KenzanDAO {
 		newEmployee.setLastName(e.getLastName());
 		newEmployee.setMiddleInitial(e.getMiddleInitial());
 		newEmployee.setUsername(e.getUsername());
-		entityManager.persist(newEmployee);
-		entityManager.flush();
-		return newEmployee.getId();
+		try
+		{
+			entityManager.persist(newEmployee);
+			entityManager.flush();
+			return newEmployee.getId();
+		} catch(PersistenceException ee)
+		{
+			return -1;
+		}
 	}
 	
 	@Transactional(readOnly = false)

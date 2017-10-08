@@ -14,6 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
+//
+//	This filter gets called on every rest call (that isn't excluded by the matcher)
+//	It's only real purpose is to extract the JWT token from the Authorization header, and
+//	stick it into the Authentication object so that the AuthenticationProvider can validate it later.
+//
 public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
 	private final AuthenticationFailureHandler failureHandler;

@@ -22,6 +22,12 @@ import david.logan.kenzan.db.Employee;
 import david.logan.kenzan.db.EmployeeRole;
 import david.logan.kenzan.server.AppConfigXML;
 
+//
+//	This class pulls apart the JWT token, and validates the various fields.
+//	It will also create a token upon request. If you created the token with
+//	the constructore JwtToken(Employee emp), the generated token will have all
+//	valid information in the payload.
+//
 public class JwtToken {
 	private Header header;
 	private Payload payload;

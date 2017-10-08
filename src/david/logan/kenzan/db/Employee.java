@@ -19,6 +19,19 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+//
+//	The employee class. It contains the business requirements, along with
+//	three others required for access security:
+//		username - Yes, we would have used some type of "firstname middleinit lastname", but I think a "token" such as username is far more efficient.
+//		password - A bcrypt (one way encryption) password
+//		many to many set of roles
+//	I allowed the username field to be added and updated from the endpoint APIs, mostly because I am disallowing a blank username in the database.
+//		Password can be null. The user can also have no roles.
+//
+//	TODO: In the "KenzanRestClient" class, Jackson is ignoring the @JsonFormat annotations for the fields below, and serializing the dates incorrectly
+//			to UTC rather than "America/Denver". Still needs to be fixed. Jackson performs perfectly in the DAO layer here in the server, so I really
+//			have no idea why it doesn't work in the client (yet.)
+//
 @Table(name="employee")
 @Entity
 public class Employee {
@@ -128,4 +141,16 @@ public class Employee {
 	}
 	
 	public Set<EmployeeRole> getRoles() { return roles; }
+	
+	@Override
+	public boolean equals(Object _other)
+	{
+		if(!(_other instanceof Employee))
+			return false;
+		Employee other = (Employee)_other;
+		return (
+				other.id == this.id
+				// Should we check other fields?
+				);
+	}
 }

@@ -13,6 +13,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+//
+//	This is what happens when our authentication provider fails to authenticate.
+//	TODO: Standardize an error response JSON object and make this match it.
+//
 public class JwtAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
 	@Override

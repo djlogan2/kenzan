@@ -18,6 +18,11 @@ import david.logan.kenzan.jwt.JwtAuthFilter;
 import david.logan.kenzan.jwt.JwtAuthenticationFailureHandler;
 import david.logan.kenzan.jwt.JwtAuthenticationProvider;
 
+//
+//	It's the "security-config.xml" replacement for Spring
+//	It's referenced by the AppConfigXML class to initialize the JWT security
+//	Well, technically it's initializing "web security." Spring really knows nothing about JWT.
+//
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)

@@ -1,5 +1,6 @@
 package david.logan.kenzan.server;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,18 @@ import david.logan.kenzan.jwt.JwtToken;
 import david.logan.kenzan.jwt.Login;
 import david.logan.kenzan.jwt.LoginResponse;
 
+//
+//	Obviously, the main guy. All standard stuff here, each endpoint is defined,
+//	with @PreAuthorize when necessary, calling the DAO layer, and returning
+//	appropriate data and responses.
+//
+//	TODO: Add a "/rest/change_password" for a user to change their own password
+//	TODO: Add a "/rest/set_password" for an administrator to set another uses password
+//	It could be a single entry point, where the issuing user is checked against the
+//		data user, and appropriate permissions are checked within the code, rather than
+//		having two endpoints and two @PreAuthorize...Probably a religious argument as
+//		to which is better. My opinion: Two endpoints are easier, and likely more secure.
+//
 @RestController
 @RequestMapping("/rest")
 public class KenzanRestServiceController {
@@ -38,7 +51,10 @@ public class KenzanRestServiceController {
 	public ErrorResponse add_emp(@RequestBody Employee newEmployee)
 	{
 		int id = dbDAO.addEmployee(newEmployee);
-		return new ErrorResponse(id);
+		if(id == -1)
+			return new ErrorResponse("Persistence exception");
+		else
+			return new ErrorResponse(id);
 	}
 	
 	@RequestMapping("/delete_emp")

@@ -7,6 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+//
+//	The simple employeerole table. Not much to it. It has a many to many relationship with the employee table.
+//
 @Table(name="employeerole")
 @Entity
 public class EmployeeRole {

@@ -7,6 +7,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+//
+//	This is springs authentication class. It has a whole bunch of stuff
+//	we don't really care about. We return the JWT token from the getCredentials()
+//	call, and we load up the authorities from the database, but otherwise
+//	none of it is used.
+//
 public class JwtAuthentication implements Authentication {
 	private String token;
 	/**
