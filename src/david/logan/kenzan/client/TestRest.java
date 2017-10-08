@@ -115,8 +115,6 @@ public class TestRest {
 			check = client.getEmployee(employee.getId());
 			assertNotNull(check);
 			assertEquals(employee.getbStatus(), check.getbStatus());
-			//TODO: I am having troubles getting Jackson to deserialize to the correct time zone,
-			// which is causing these two asserts to fail. Fix this.
 			assertEquals(employee.getDateOfBirth().getTimeZone(), check.getDateOfBirth().getTimeZone());
 			assertEquals(employee.getDateOfBirth().get(Calendar.YEAR), check.getDateOfBirth().get(Calendar.YEAR));
 			assertEquals(employee.getDateOfBirth().get(Calendar.MONTH), check.getDateOfBirth().get(Calendar.MONTH));
