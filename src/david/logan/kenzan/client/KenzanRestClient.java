@@ -8,7 +8,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,6 +35,7 @@ public class KenzanRestClient {
 	
 	public KenzanRestClient() {}
 	
+	@SuppressWarnings("unchecked")
 	private <T> T executeAPI(String api, Object data, TypeReference<T> typeRef) //Class<?> clazz)
 	{
 			try {
@@ -123,7 +123,6 @@ public class KenzanRestClient {
 		return false;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<Employee> getAllEmployees()
 	{
 		//ArrayList<Employee> employee_list = new ArrayList<Employee>();

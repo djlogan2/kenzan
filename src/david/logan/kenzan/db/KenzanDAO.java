@@ -1,13 +1,11 @@
 package david.logan.kenzan.db;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
@@ -90,15 +88,9 @@ public class KenzanDAO {
 		newEmployee.setLastName(e.getLastName());
 		newEmployee.setMiddleInitial(e.getMiddleInitial());
 		newEmployee.setUsername(e.getUsername());
-		try
-		{
-			entityManager.persist(newEmployee);
-			entityManager.flush();
-			return newEmployee.getId();
-		} catch(PersistenceException ee)
-		{
-			return -1;
-		}
+		entityManager.persist(newEmployee);
+		entityManager.flush();
+		return newEmployee.getId();
 	}
 	
 	@Transactional(readOnly = false)

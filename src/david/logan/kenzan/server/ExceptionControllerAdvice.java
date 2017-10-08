@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ExceptionControllerAdvice {
 
 	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseBody
-	public ErrorResponse exception(AccessDeniedException e)
+	public @ResponseBody ErrorResponse exception(AccessDeniedException e)
 	{
 		return new ErrorResponse("Insufficient authority");
 	}
