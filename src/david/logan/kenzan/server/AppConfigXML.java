@@ -2,12 +2,12 @@ package david.logan.kenzan.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +30,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan("david.logan.kenzan.server")
 @ComponentScan("david.logan.kenzan.jwt")
 @ComponentScan("david.logan.kenzan.db")
+//It should work to prevent us from needing a DataSource bean, but it isn't working.
+//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class AppConfigXML {
 	@Bean
 	public JpaTransactionManager jpaTransMan(){
@@ -48,9 +50,11 @@ public class AppConfigXML {
 		return em;
 	}
 
-	private DataSource dataSource() {
+	@Bean
+	public DriverManagerDataSource dataSource() {
+		//System.out.println("DL: Setting data source");
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(properties.getProperty("datasource.driver.class.name")); // sigh :)
+		dataSource.setDriverClassName(properties.getProperty("datasource.driver.class.name"));
 		dataSource.setUrl(properties.getProperty("datasource.url"));
 		dataSource.setUsername(properties.getProperty("datasource.username"));
 		dataSource.setPassword(properties.getProperty("datasource.password"));
@@ -67,14 +71,12 @@ public class AppConfigXML {
 		InputStream input = null;
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			URL[] urls = ((URLClassLoader)classLoader).getURLs();
-
-	        for(URL url: urls){
-	        	System.out.println(url.getFile());
-	        }
 
 			input = classLoader.getResourceAsStream("kenzan.properties");
 			properties.load(input);
+			//for(Object key : properties.keySet())
+			//	System.out.println("DL: kenzan.properties: " + key + ": " + properties.getProperty((String) key));
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -88,10 +90,5 @@ public class AppConfigXML {
 		}
 	}
 	
-	private Properties additionalProperties() {
-		Properties properties = new Properties();
-		properties.setProperty("hibernate.hbm2ddl.auto", "update");
-		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-		return properties;
-	}
+	private Properties additionalProperties() { return properties; }
 }
