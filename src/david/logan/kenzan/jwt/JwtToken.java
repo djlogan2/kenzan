@@ -33,6 +33,7 @@ public class JwtToken {
 	private Payload payload;
 	
 	public ArrayList<String> getRoles() { return payload.roles; }
+	public String getUsername() { return payload.username; }
 	
 	public JwtToken(String token)
 	{

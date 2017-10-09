@@ -174,4 +174,43 @@ public class TestRest {
 		notexist.setId(12345678);
 		assertFalse(clientMap.get("kenzand").deleteEmployee(notexist));
 	}
+	
+	@Test
+	public void test_set_our_password()
+	{
+		KenzanRestClient superguy = new KenzanRestClient();
+		assertTrue(superguy.login("kenzanp",  "kenzan"));
+
+		Employee emp = this.newEmployee("ourpassword");
+		assertNotEquals(-1, clientMap.get("kenzana").addEmployee(emp));
+		KenzanRestClient newguy = new KenzanRestClient();
+		assertTrue(superguy.setPassword(emp.getUsername(),  "hello_world_new_password"));
+		assertTrue(newguy.login(emp.getUsername(), "hello_world_new_password"));
+		assertTrue(newguy.setPassword("changed_password"));
+		assertFalse(newguy.login(emp.getUsername(),  "hello_world_new_password"));
+		assertTrue(newguy.login(emp.getUsername(), "changed_password"));
+	}
+	
+	@Test
+	public void test_fail_set_other_password()
+	{
+		Employee emp = this.newEmployee("failotherpw");
+		assertNotEquals(-1, clientMap.get("kenzana").addEmployee(emp));
+		KenzanRestClient newguy = new KenzanRestClient();
+		assertFalse(clientMap.get("kenzana").setPassword(emp.getUsername(),  "hello_world_new_password"));
+		assertFalse(newguy.login(emp.getUsername(),  "hello_world_new_password"));
+	}
+	
+	@Test
+	public void test_succeed_set_other_password()
+	{
+		KenzanRestClient superguy = new KenzanRestClient();
+		assertTrue(superguy.login("kenzanp",  "kenzan"));
+
+		Employee emp = this.newEmployee("succeeedotherpw");
+		assertNotEquals(-1, clientMap.get("kenzana").addEmployee(emp));
+		KenzanRestClient newguy = new KenzanRestClient();
+		assertTrue(superguy.setPassword(emp.getUsername(),  "ab_123_cde"));
+		assertTrue(newguy.login(emp.getUsername(),  "ab_123_cde"));
+	}
 }

@@ -29,6 +29,7 @@ public class JwtAuthentication implements Authentication {
 	
 	public void setAuthenticationFromToken(JwtToken token)
 	{
+		this.username = token.getUsername();
 		authorities = new ArrayList<GrantedAuthority>();
 		for(String role : token.getRoles())
 			authorities.add(new SimpleGrantedAuthority(role));
