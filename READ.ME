@@ -20,11 +20,14 @@ GET rest/get_all
 		
 GET rest/get_emp?id={#}
 	No body required. However, a header of "Authorization: <jwt token>" is required
+	(which of course means they don't need any special authority, but the need to
+	 exit in the database with a valid password.)
 	A JSON object is returned in the body, which is a single employee record
 	
 POST rest/add_emp
 POST rest/update_emp
-	A header of "Authorization: <jwt token>" is required
+	A header of "Authorization: <jwt token>" is required, and the user is required
+	to have ROLE_ADD_EMP or ROLE_UPD_EMP, depending upon the operation.
 	The entire Employee record as a JSON object in the body:
 	{
 		"id": "5",
@@ -43,7 +46,8 @@ POST rest/update_emp
 	}
 	
 GET rest/delete_emp?id={#}
-	A header of "Authorization: <jwt token>" is required
+	A header of "Authorization: <jwt token>" is required and the user is required
+	to have ROLE_DELETE_EMP
 	No body is required
 	It returns a JSON object in the body:
 	{

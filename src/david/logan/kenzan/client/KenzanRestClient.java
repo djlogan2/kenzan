@@ -156,4 +156,14 @@ public class KenzanRestClient {
 	}
 	
 	public String getUsername() { return username; }
+	
+	public boolean updatePassword(String password)
+	{
+		return false;
+	}
+	
+	public boolean updatePassword(String username, String password)
+	{
+		return false;
+	}
 }
