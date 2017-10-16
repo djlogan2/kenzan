@@ -1,5 +1,6 @@
 This is a Spring web application. You can compile this to a war file and deploy to your favorite web server. When I
-deployed to Tomcat9, all I had to do was add "Kenzan.war" to tomcats webapps directory.
+deployed to Tomcat9, all I had to do was add "Kenzan.war" to tomcats webapps directory. I also had to put kenzen.properties
+into the Tomcat 9's "/lib" directory.
 
 The API's are:
 POST rest/login
@@ -10,19 +11,24 @@ POST rest/login
 	}
 	It returns a JSON structure in the body:
 	{
-	  error: <some string> or "ok"
+	  error: <some string> or null
+	  errorcode: An error code from the ErrorNumber enum. One would hope we get an 'ErrorNumber.NONE'
 	  jwt: <a JSON web token> or null
 	}
 
 GET rest/get_all
 	No body required. However, a header of "Authorization: <jwt token>" is required
 	A JSON object is returned, which is an array of employee structures
+    ? empty database ?
+    ? invalid token ?
 		
 GET rest/get_emp?id={#}
 	No body required. However, a header of "Authorization: <jwt token>" is required
 	(which of course means they don't need any special authority, but the need to
 	 exit in the database with a valid password.)
 	A JSON object is returned in the body, which is a single employee record
+	? no record ?
+	? invalid token ?
 	
 POST rest/add_emp
 POST rest/update_emp
@@ -41,8 +47,9 @@ POST rest/update_emp
 	Obviously if it's an add, don't bother setting the id. It won't be carried over.
 	Both APIs will return a JSON object in the body:
 	{
-		error: <some string> or "ok"
-		id: <id of the inserted record, 0 for an update or an error>
+		error: <some string> or null
+		errorcode: ErrorNumber.NONE or the error
+		id: <id of the inserted/updated record, 0 for an error>
 	}
 	
 GET rest/delete_emp?id={#}
@@ -51,21 +58,45 @@ GET rest/delete_emp?id={#}
 	No body is required
 	It returns a JSON object in the body:
 	{
-		error: <some string> or "ok"
-		id: 0
+		error: <some string> or null
+		errorcode: ErrorNumber.NONE or an error code
+		id: <id of the deleted record, 0 for an error>
 	}
-
-In some cases, if you send an invalid authorization token, it will return an XML (HTML) 403 response. Thus, if you fail to
-receive a valid JSON response, you can either check the response code, or you can safely assume you did not have authorization.
-
+/***************************************************************************************************
+ *                                                                                                 *
+ *  Evidently this API is not yet implemented. I will implement this method soon.                  *
+ *  Yea, I figured it out. I accidentally reverted to my last GIT commit for unrelated problems    *
+ *  before I checked in the set_password code. Such is life. I'll do it again soon.                *
+ *                                                                                                 *
+ ***************************************************************************************************/
+POST rest/set_password
+    A header of "Authorization: <jwt token>" is required. If the username in the body of the request
+    does not match the username in the JWT, then the user is required to have ROLE_SET_PASSWORD. In
+    english, this means that if the user is not setting their own password, they need to have special
+    permissions.
+    The passed structure:
+    {
+        username: <username to set the password for>
+        password:   <the new password>
+    }
+    It returns a JSON object in the body:
+    {
+        error: <some string> or null
+        errorcode: ErrorNumber.NONE or an error code
+        id: 0
+    }
+/***************************************************************************************************
+ ***************************************************************************************************/
 Once you have the server up and running, you can run "TestRest.java" as a JUnit test and it should pass.
+I have far better unit tests written in node.js now, but I don't have them available for general use yet.
 
 initial.sql contains the database initialization. Obviously you don't have to insert all of the users,
-they are added to test the application.
+but if you are going to run the uni tests on the application, they are required. In fact, if you are going
+to run the unit tests, you MUST drop and recreate and add the users.
 
-However, internally, the code requires "ROLE_ADD_EMP", "ROLE_UPDATE_EMP", and "ROLE_DELETE_EMP"
+Internally, the java code requires "ROLE_ADD_EMP", "ROLE_UPDATE_EMP", "ROLE_DELETE_EMP", and "ROLE_SET_PASSWORD"
 in order for users to be able to perform the operations. Just existing in the database is enough for the "login" and both "get" APIs.
-If a user is not assigned to one or more of those roles in the database, he or she will not be able to execute the APIs.
+If a user is not assigned to one or more of those roles in the database, he or she will not be able to execute any of the other APIs.
 
 The properties file: It's named "kenzan.properties", and requires the following properties:
 	kenzan.jwt.signing.key=<A random string of data for signing the JSON web token>
@@ -75,5 +106,3 @@ The properties file: It's named "kenzan.properties", and requires the following 
 	datasource.url=<The database url for hibernate>
 	datasource.username=<The username for the database>
 	datasource.password=<And the password for the database> // The code should be changed to get this information from a password server
-Place your properties file anywhere in your web server that is part of the applications classpath. For testing, I put mine into
-WEB-INF/classes/kenzan.properties

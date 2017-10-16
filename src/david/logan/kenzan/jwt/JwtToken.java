@@ -64,16 +64,16 @@ public class JwtToken {
 		
 		if(this.payload.issuer == null || this.payload.issuer.isEmpty())
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUER);
+		if(!this.payload.issuer.equals(AppConfigXML.getProperties().getProperty("kenzan.jwt.issuer")))
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUER);
+				
 		if(this.payload.atissued == null)
-			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUER);
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUED);
 		if(this.payload.expiration == null)
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_EXPIRATION);
 		if(this.payload.username == null || this.payload.username.isEmpty())
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_USERNAME);
 
-		if(!this.payload.issuer.equals(AppConfigXML.getProperties().getProperty("kenzan.jwt.issuer")))
-			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUER);
-		
 		Charset asciiCs = Charset.forName("US-ASCII");
         Mac sha256_HMAC;
 		try {
