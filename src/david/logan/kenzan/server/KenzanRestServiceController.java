@@ -21,13 +21,6 @@ import david.logan.kenzan.jwt.LoginResponse;
 //	with @PreAuthorize when necessary, calling the DAO layer, and returning
 //	appropriate data and responses.
 //
-//	TODO: Add a "/rest/change_password" for a user to change their own password
-//	TODO: Add a "/rest/set_password" for an administrator to set another uses password
-//	It could be a single entry point, where the issuing user is checked against the
-//		data user, and appropriate permissions are checked within the code, rather than
-//		having two endpoints and two @PreAuthorize...Probably a religious argument as
-//		to which is better. My opinion: Two endpoints are easier, and likely more secure.
-//
 @RestController
 @RequestMapping("/rest")
 public class KenzanRestServiceController {
@@ -51,7 +44,7 @@ public class KenzanRestServiceController {
 	{
 		int id = dbDAO.addEmployee(newEmployee);
 		if(id == -1)
-			return new ErrorResponse("Persistence exception");
+			return new ErrorResponse(ErrorNumber.DUPLICATE_RECORD, "Duplicate record");
 		else
 			return new ErrorResponse(id);
 	}
@@ -61,9 +54,9 @@ public class KenzanRestServiceController {
 	public ErrorResponse delete_emp(@RequestParam(value="id", defaultValue="-1") int id)
 	{
 		if(dbDAO.deleteEmployee(id))
-			return new ErrorResponse("ok");
+			return new ErrorResponse();
 		else
-			return new ErrorResponse("No records deleted");
+			return new ErrorResponse(ErrorNumber.CANNOT_DELETE_NONEXISTENT_RECORD, "No records deleted");
 	}
 	
 	@RequestMapping(value = "/update_emp", method = RequestMethod.POST)	
@@ -71,9 +64,9 @@ public class KenzanRestServiceController {
 	public ErrorResponse update_emp(@RequestBody Employee updatedEmployee)
 	{
 		if(dbDAO.updateEmployee(updatedEmployee))
-			return new ErrorResponse("ok");
+			return new ErrorResponse();
 		else
-			return new ErrorResponse("No records updated");
+			return new ErrorResponse(ErrorNumber.DUPLICATE_RECORD, "No records updated");
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -84,16 +77,19 @@ public class KenzanRestServiceController {
 		if(e == null)
 		{
 			resp.error = "Unable to validate user/password combination";
+			resp.errorcode = ErrorNumber.INVALID_USERNAME_OR_PASSWORD;
 		}
 		else
 		{
 			JwtToken token = new JwtToken(e);
 			try {
+				resp.errorcode = ErrorNumber.NONE;
 				resp.jwt = token.getToken();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				resp.jwt = null;
 				resp.error = e1.getMessage();
+				resp.errorcode = ErrorNumber.UNKNOWN_ERROR;
 			}
 		}
 		return resp;

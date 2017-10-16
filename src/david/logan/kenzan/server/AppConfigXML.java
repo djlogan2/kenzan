@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -15,6 +16,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 //
 // Spring configuration, replacing the old XML configuration file
@@ -33,6 +37,15 @@ public class AppConfigXML {
 	public JpaTransactionManager jpaTransMan(){
 		JpaTransactionManager jtManager = new JpaTransactionManager(entityManager().getObject());
 		return jtManager;
+	}
+	
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+	 MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+	 ObjectMapper objectMapper = new ObjectMapper();
+	 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+	 jsonConverter.setObjectMapper(objectMapper);
+	 return jsonConverter;
 	}
 
 	@Bean

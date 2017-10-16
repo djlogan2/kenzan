@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import david.logan.kenzan.db.Employee;
 import david.logan.kenzan.jwt.Login;
 import david.logan.kenzan.jwt.LoginResponse;
+import david.logan.kenzan.server.ErrorNumber;
 import david.logan.kenzan.server.ErrorResponse;
 
 //
@@ -35,7 +36,6 @@ public class KenzanRestClient {
 	
 	public KenzanRestClient() {}
 	
-	@SuppressWarnings("unchecked")
 	private <T> T executeAPI(String api, Object data, TypeReference<T> typeRef) //Class<?> clazz)
 	{
 			try {
@@ -72,7 +72,7 @@ public class KenzanRestClient {
 					mapper.writeValue(conn.getOutputStream(), data);
 					conn.getOutputStream().close();
 				}
-				
+/*				
 				if (conn.getResponseCode() != 200) {
 					if(typeRef.getType() instanceof ErrorResponse)
 					{
@@ -83,7 +83,7 @@ public class KenzanRestClient {
 					}
 					throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
 				}
-		
+*/		
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Denver"));
 				mapper.setDateFormat(dateFormat);
@@ -116,7 +116,7 @@ public class KenzanRestClient {
 		this.username = login.username = username;
 		login.password = password;
 		LoginResponse resp = (LoginResponse)executeAPI("login", login, new TypeReference<LoginResponse>() {});
-		if(resp.error == null && resp.jwt != null) {
+		if(resp.errorcode == ErrorNumber.NONE && resp.jwt != null) {
 			this.jwt = resp.jwt;
 			return true;
 		}
