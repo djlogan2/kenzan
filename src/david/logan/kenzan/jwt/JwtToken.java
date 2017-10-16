@@ -13,14 +13,14 @@ import java.util.Iterator;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.security.authentication.AuthenticationServiceException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import david.logan.kenzan.db.Employee;
 import david.logan.kenzan.db.EmployeeRole;
 import david.logan.kenzan.server.AppConfigXML;
+import david.logan.kenzan.server.ErrorNumber;
+import david.logan.kenzan.server.JWTAuthenticationServiceException;
 
 //
 //	This class pulls apart the JWT token, and validates the various fields.
@@ -36,10 +36,17 @@ public class JwtToken {
 	
 	public JwtToken(String token)
 	{
-		if(token == null || token.isEmpty() || ! token.startsWith("Bearer "))
-			throw new AuthenticationServiceException("Invalid token");
+		if(token == null || token.isEmpty())
+			throw new JWTAuthenticationServiceException(ErrorNumber.NO_AUTHORIZATION_TOKEN);
+		
+		if(!token.startsWith("Bearer "))
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_NO_BEARER);
 		
 		String[] triples = token.replaceAll("Bearer ", "").split("\\.");
+		
+		if(triples == null || triples.length != 3)
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_PARSE_ERROR);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String header = new String(Base64.getDecoder().decode(triples[0]));
 		String payload = new String(Base64.getDecoder().decode(triples[1].getBytes()));
@@ -49,11 +56,23 @@ public class JwtToken {
 			this.header = mapper.readValue(header,  Header.class);
 			this.payload = mapper.readValue(payload,  Payload.class);
 		} catch (IOException e1) {
-			throw new AuthenticationServiceException("ERR001: Unable to parse json from jwt");
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_PARSE_ERROR);
 		}
 		
 		if(this.header.alg == null || !this.header.alg.equals("HS256"))
-			throw new AuthenticationServiceException("ERR004: Invalid signing value (alg)");
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_HEADER_INVALID_ALGORITHM);
+		
+		if(this.payload.issuer == null || this.payload.issuer.isEmpty())
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUER);
+		if(this.payload.atissued == null)
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUER);
+		if(this.payload.expiration == null)
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_EXPIRATION);
+		if(this.payload.username == null || this.payload.username.isEmpty())
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_USERNAME);
+
+		if(!this.payload.issuer.equals(AppConfigXML.getProperties().getProperty("kenzan.jwt.issuer")))
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUER);
 		
 		Charset asciiCs = Charset.forName("US-ASCII");
         Mac sha256_HMAC;
@@ -63,15 +82,15 @@ public class JwtToken {
 	        sha256_HMAC.init(secret_key);
 	        byte[] mac_data = sha256_HMAC.doFinal(asciiCs.encode(triples[0] + "." + triples[1]).array());
 	        if(!Arrays.equals(mac_data, signature))
-	        		throw new AuthenticationServiceException("ERR002: Error in jwt");
+	        		throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_INVALID_SIGNATURE);
 		} catch (NoSuchAlgorithmException e) {
-    		throw new AuthenticationServiceException("ERR003: Error in jwt");
+			throw new JWTAuthenticationServiceException(ErrorNumber.UNKNOWN_ERROR, e.getMessage());
 		} catch (InvalidKeyException e) {
-    		throw new AuthenticationServiceException("ERR005: Error in jwt");
+    			throw new JWTAuthenticationServiceException(ErrorNumber.UNKNOWN_ERROR, e.getMessage());
 		}
 		
 		if(Calendar.getInstance().after(this.payload.expiration))
-			throw new AuthenticationServiceException("ERR006: Authentication has expired");
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_EXPIRED);
 	}
 	
 	public JwtToken(Employee emp)

@@ -44,7 +44,7 @@ public class KenzanRestServiceController {
 	{
 		int id = dbDAO.addEmployee(newEmployee);
 		if(id == -1)
-			return new ErrorResponse(ErrorNumber.DUPLICATE_RECORD, "Duplicate record");
+			return new ErrorResponse(id, ErrorNumber.DUPLICATE_RECORD, "Duplicate record");
 		else
 			return new ErrorResponse(id);
 	}
@@ -54,9 +54,9 @@ public class KenzanRestServiceController {
 	public ErrorResponse delete_emp(@RequestParam(value="id", defaultValue="-1") int id)
 	{
 		if(dbDAO.deleteEmployee(id))
-			return new ErrorResponse();
+			return new ErrorResponse(id);
 		else
-			return new ErrorResponse(ErrorNumber.CANNOT_DELETE_NONEXISTENT_RECORD, "No records deleted");
+			return new ErrorResponse(id, ErrorNumber.CANNOT_DELETE_NONEXISTENT_RECORD, "No records deleted");
 	}
 	
 	@RequestMapping(value = "/update_emp", method = RequestMethod.POST)	
@@ -64,9 +64,9 @@ public class KenzanRestServiceController {
 	public ErrorResponse update_emp(@RequestBody Employee updatedEmployee)
 	{
 		if(dbDAO.updateEmployee(updatedEmployee))
-			return new ErrorResponse();
+			return new ErrorResponse(updatedEmployee.getId());
 		else
-			return new ErrorResponse(ErrorNumber.DUPLICATE_RECORD, "No records updated");
+			return new ErrorResponse(updatedEmployee.getId(), ErrorNumber.DUPLICATE_RECORD, "No records updated");
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)

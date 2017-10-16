@@ -1,7 +1,6 @@
 package david.logan.kenzan.jwt;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +12,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import david.logan.kenzan.server.ErrorResponse;
+import david.logan.kenzan.server.JWTAuthenticationServiceException;
+
 //
 //	This is what happens when our authentication provider fails to authenticate.
 //	TODO: Standardize an error response JSON object and make this match it.
@@ -22,13 +24,12 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
 			throws IOException, ServletException {
+		JWTAuthenticationServiceException jase = (JWTAuthenticationServiceException)e;
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		ErrorResponse resp = new ErrorResponse(jase.errorcode, jase.getMessage());
 		ObjectMapper mapper = new ObjectMapper();
-		HashMap<String, Object> m = new HashMap<String, Object>();
-		m.put("error",  e.getMessage());
-		m.put("status",  HttpServletResponse.SC_FORBIDDEN);
-		mapper.writeValue(response.getWriter(), m);
+		mapper.writeValue(response.getWriter(), resp);
 	}
 
 }
