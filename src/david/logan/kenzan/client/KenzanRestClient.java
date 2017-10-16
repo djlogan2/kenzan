@@ -72,18 +72,7 @@ public class KenzanRestClient {
 					mapper.writeValue(conn.getOutputStream(), data);
 					conn.getOutputStream().close();
 				}
-/*				
-				if (conn.getResponseCode() != 200) {
-					if(typeRef.getType() instanceof ErrorResponse)
-					{
-						ErrorResponse resp = new ErrorResponse();
-						resp.error = conn.getResponseMessage();
-						resp.id = 0;
-						return (T)resp;
-					}
-					throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-				}
-*/		
+
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				dateFormat.setTimeZone(TimeZone.getTimeZone("America/Denver"));
 				mapper.setDateFormat(dateFormat);
@@ -116,7 +105,7 @@ public class KenzanRestClient {
 		this.username = login.username = username;
 		login.password = password;
 		LoginResponse resp = (LoginResponse)executeAPI("login", login, new TypeReference<LoginResponse>() {});
-		if(resp.errorcode == ErrorNumber.NONE && resp.jwt != null) {
+		if(resp != null && resp.errorcode == ErrorNumber.NONE && resp.jwt != null) {
 			this.jwt = resp.jwt;
 			return true;
 		}
@@ -137,7 +126,7 @@ public class KenzanRestClient {
 	public int addEmployee(Employee e)
 	{
 		ErrorResponse resp = (ErrorResponse) executeAPI("add_emp", e, new TypeReference<ErrorResponse>() {});
-		if(resp != null && resp.error != null && resp.error.equals("ok"))
+		if(resp != null && resp.errorcode == ErrorNumber.NONE)
 			return resp.id;
 		else
 			return -1;
@@ -146,13 +135,13 @@ public class KenzanRestClient {
 	public boolean updateEmployee(Employee e)
 	{
 		ErrorResponse resp = (ErrorResponse) executeAPI("update_emp", e, new TypeReference<ErrorResponse>() {});
-		return resp != null && resp.error != null && resp.error.equals("ok");
+		return resp != null && resp.errorcode == ErrorNumber.NONE;
 	}
 	
 	public boolean deleteEmployee(Employee e)
 	{
 		ErrorResponse resp = (ErrorResponse) executeAPI("delete_emp", e.getId(), new TypeReference<ErrorResponse>() {});
-		return resp != null && resp.error != null && resp.error.equals("ok");
+		return resp != null && resp.errorcode == ErrorNumber.NONE;
 	}
 	
 	public String getUsername() { return username; }
