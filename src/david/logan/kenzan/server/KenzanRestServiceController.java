@@ -1,9 +1,13 @@
 package david.logan.kenzan.server;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -93,5 +97,27 @@ public class KenzanRestServiceController {
 			}
 		}
 		return resp;
+	}
+	
+	@RequestMapping(value = "/set_password", method = RequestMethod.POST)
+	public ErrorResponse updatePassword(@RequestBody Login login)
+	{
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		System.out.println("Passed in username=" + login.username + ", principal=" + authentication.getName());
+		
+		boolean authorized = authentication.getName().equals(login.username);
+
+		if(!authorized)
+			for(Iterator<? extends GrantedAuthority> i = authentication.getAuthorities().iterator() ; i.hasNext();)
+				if(i.next().getAuthority().equals("ROLE_SET_PASSWORD")) authorized = true;
+		
+		if(!authorized)
+			return new ErrorResponse("Not authorized");
+		
+		if(dbDAO.setPassword(login.username, login.password))
+			return new ErrorResponse("ok");
+		else
+			return new ErrorResponse("Unable to set password");
 	}
 }

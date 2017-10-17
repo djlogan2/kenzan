@@ -60,6 +60,7 @@ CREATE TABLE `employee_role_join` (
 insert into employeerole (role) values ('ROLE_ADD_EMP');
 insert into employeerole (role) values ('ROLE_UPDATE_EMP');
 insert into employeerole (role) values ('ROLE_DELETE_EMP');
+insert into employeerole (role) values ('ROLE_SET_PASSWORD');
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-11-26', '2001-01-01', 'Kenzan', 'Test', 'A', 'kenzan');
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-11-27', '2002-02-02', 'Kenzan', 'Test A', 'B', 'kenzana');
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-11-28', '2003-03-03', 'Kenzan', 'Test AD', 'C', 'kenzanad');
@@ -68,6 +69,7 @@ insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastNam
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-12-01', '2006-06-06', 'Kenzan', 'Test D', 'F', 'kenzand');
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-12-02', '2007-07-07', 'Kenzan', 'Test DU', 'G', 'kenzandu');
 insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-12-03', '2008-08-08', 'Kenzan', 'Test U', 'H', 'kenzanu');
+insert into employee (bStatus, dateOfBirth, dateOfEmployment, firstName, lastName, middleInitial, username) values (0, '1968-12-04', '2008-08-09', 'Kenzan', 'Test P', 'H', 'kenzanp');
 update employee set password='$2a$10$i51OFodMCqcVjvDyQUt8IeYhtuMH7J6JqUXKwWWPCP00DcgHnIscG'; /* password='kenzan' */
 insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzana'), (select id from employeerole where role='ROLE_ADD_EMP'));
 insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzanad'), (select id from employeerole where role='ROLE_ADD_EMP'));
@@ -81,3 +83,4 @@ insert into employee_role_join (employee_id, role_id) values ((select id from em
 insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzandu'), (select id from employeerole where role='ROLE_UPDATE_EMP'));
 insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzanau'), (select id from employeerole where role='ROLE_UPDATE_EMP'));
 insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzanu'), (select id from employeerole where role='ROLE_UPDATE_EMP'));
+insert into employee_role_join (employee_id, role_id) values ((select id from employee where username='kenzanp'), (select id from employeerole where role='ROLE_SET_PASSWORD'));

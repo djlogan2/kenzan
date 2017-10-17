@@ -146,13 +146,21 @@ public class KenzanRestClient {
 	
 	public String getUsername() { return username; }
 	
-	public boolean updatePassword(String password)
+	public boolean setPassword(String password)
 	{
-		return false;
+		Login login = new Login();
+		login.username = username;
+		login.password = password;
+		ErrorResponse resp = (ErrorResponse)executeAPI("set_password", login, new TypeReference<ErrorResponse>() {});
+		return resp.error.equals("ok");
 	}
 	
-	public boolean updatePassword(String username, String password)
+	public boolean setPassword(String username, String password)
 	{
-		return false;
+		Login login = new Login();
+		login.username = username;
+		login.password = password;
+		ErrorResponse resp = (ErrorResponse)executeAPI("set_password", login, new TypeReference<ErrorResponse>() {});
+		return resp.error.equals("ok");
 	}
 }

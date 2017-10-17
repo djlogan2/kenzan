@@ -145,4 +145,22 @@ public class KenzanDAO {
 		.executeUpdate();
 		return (updated != 0);
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean setPassword(String username, String password)
+	{
+		try
+		{
+			Employee exists = (Employee) entityManager.createQuery("SELECT e FROM Employee e where username=:username and bStatus=:status")
+					.setParameter("username",  username)
+					.setParameter("status", Status.ACTIVE)
+					.getSingleResult();
+			exists.setPassword(password);
+			entityManager.merge(exists);
+			return true;
+		} catch(NoResultException e)
+		{
+			return false;
+		}
+	}
 }
