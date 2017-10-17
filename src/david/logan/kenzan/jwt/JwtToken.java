@@ -69,8 +69,13 @@ public class JwtToken {
 				
 		if(this.payload.atissued == null)
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_ISSUED);
+		
 		if(this.payload.expiration == null)
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_EXPIRATION);
+		
+		if(this.payload.atissued.after(this.payload.expiration))
+			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUED);
+		
 		if(this.payload.username == null || this.payload.username.isEmpty())
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_USERNAME);
 

@@ -1,5 +1,7 @@
 package david.logan.kenzan.server;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ErrorNumber {
 	NONE,
 	INVALID_USERNAME_OR_PASSWORD,
@@ -27,5 +29,10 @@ public enum ErrorNumber {
 	CANNOT_UPDATE_NONEXISTENT_RECORD,
 	UNKNOWN_ERROR,
 	CANNOT_INSERT_MISSING_FIELDS,
-	CANNOT_INSERT_UNKNOWN_FIELDS
+	CANNOT_INSERT_UNKNOWN_FIELDS;
+	
+    @JsonValue
+    public int toValue() {
+        return ordinal();
+    }
 }

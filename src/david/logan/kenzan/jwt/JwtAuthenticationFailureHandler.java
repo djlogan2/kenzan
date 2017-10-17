@@ -25,8 +25,10 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
 			throws IOException, ServletException {
 		JWTAuthenticationServiceException jase = (JWTAuthenticationServiceException)e;
-		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+
 		ErrorResponse resp = new ErrorResponse(jase.errorcode, jase.getMessage());
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(response.getWriter(), resp);
