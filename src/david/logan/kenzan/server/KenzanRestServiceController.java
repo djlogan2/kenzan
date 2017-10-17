@@ -113,11 +113,11 @@ public class KenzanRestServiceController {
 				if(i.next().getAuthority().equals("ROLE_SET_PASSWORD")) authorized = true;
 		
 		if(!authorized)
-			return new ErrorResponse("Not authorized");
+			return new ErrorResponse(ErrorNumber.NOT_AUTHORIZED_FOR_OPERATION, "Not authorized");
 		
 		if(dbDAO.setPassword(login.username, login.password))
-			return new ErrorResponse("ok");
+			return new ErrorResponse();
 		else
-			return new ErrorResponse("Unable to set password");
+			return new ErrorResponse(ErrorNumber.UNKNOWN_ERROR, "Unable to set password");
 	}
 }

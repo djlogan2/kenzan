@@ -62,13 +62,7 @@ GET rest/delete_emp?id={#}
 		errorcode: ErrorNumber.NONE or an error code
 		id: <id of the deleted record, 0 for an error>
 	}
-/***************************************************************************************************
- *                                                                                                 *
- *  Evidently this API is not yet implemented. I will implement this method soon.                  *
- *  Yea, I figured it out. I accidentally reverted to my last GIT commit for unrelated problems    *
- *  before I checked in the set_password code. Such is life. I'll do it again soon.                *
- *                                                                                                 *
- ***************************************************************************************************/
+
 POST rest/set_password
     A header of "Authorization: <jwt token>" is required. If the username in the body of the request
     does not match the username in the JWT, then the user is required to have ROLE_SET_PASSWORD. In
@@ -85,8 +79,7 @@ POST rest/set_password
         errorcode: ErrorNumber.NONE or an error code
         id: 0
     }
-/***************************************************************************************************
- ***************************************************************************************************/
+
 Once you have the server up and running, you can run "TestRest.java" as a JUnit test and it should pass.
 I have far better unit tests written in node.js now, but I don't have them available for general use yet.
 
