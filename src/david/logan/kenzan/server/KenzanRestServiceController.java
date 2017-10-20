@@ -70,7 +70,7 @@ public class KenzanRestServiceController {
 		if(dbDAO.updateEmployee(updatedEmployee))
 			return new ErrorResponse(updatedEmployee.getId());
 		else
-			return new ErrorResponse(updatedEmployee.getId(), ErrorNumber.DUPLICATE_RECORD, "No records updated");
+			return new ErrorResponse(updatedEmployee.getId(), ErrorNumber.CANNOT_UPDATE_NONEXISTENT_RECORD, "No records updated");
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -118,6 +118,6 @@ public class KenzanRestServiceController {
 		if(dbDAO.setPassword(login.username, login.password))
 			return new ErrorResponse();
 		else
-			return new ErrorResponse(ErrorNumber.UNKNOWN_ERROR, "Unable to set password");
+			return new ErrorResponse(ErrorNumber.INVALID_USERNAME_OR_PASSWORD, "Unable to set password");
 	}
 }

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 //
 //	The employee class. It contains the business requirements, along with
 //	three others required for access security:
-//		username - Yes, we would have used some type of "firstname middleinit lastname", but I think a "token" such as username is far more efficient.
+//		username - Yes, we could have used some type of "firstname middleinit lastname", but I think a "token" such as username is far more efficient.
 //		password - A bcrypt (one way encryption) password
 //		many to many set of roles
 //	I allowed the username field to be added and updated from the endpoint APIs, mostly because I am disallowing a blank username in the database.
@@ -34,19 +34,28 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
+
 	@Column(nullable = false)
 	private String firstName;
+	
 	@Column(nullable = true)
-	private char middleInitial;
+	private Character middleInitial;
+	
 	@Column(nullable = false)
 	private String lastName;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="America/Denver")
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, timezone="America/Denver")
 	@Column(nullable = false)
 	private Calendar dateOfBirth;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Denver")
+	
+	@Column(nullable = true)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "America/Denver")
 	private Calendar dateOfEmployment;
+	
 	@Column(nullable = false)
 	private Status bStatus;
+	
+	@Column(nullable = false)
 	private String username;
 
 	@JsonIgnore
@@ -81,7 +90,7 @@ public class Employee {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	public char getMiddleInitial() {
+	public Character getMiddleInitial() {
 		return middleInitial;
 	}
 	public void setMiddleInitial(char middleInitial) {

@@ -74,7 +74,7 @@ public class JwtToken {
 		if(this.payload.expiration == null)
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_NO_EXPIRATION);
 		
-		if(this.payload.atissued.after(this.payload.expiration))
+		if(this.payload.atissued.after(this.payload.expiration) || this.payload.atissued.after(Calendar.getInstance()))
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUED);
 		
 		if(this.payload.username == null || this.payload.username.isEmpty())
@@ -92,7 +92,7 @@ public class JwtToken {
 		} catch (NoSuchAlgorithmException e) {
 			throw new JWTAuthenticationServiceException(ErrorNumber.UNKNOWN_ERROR, e.getMessage());
 		} catch (InvalidKeyException e) {
-    			throw new JWTAuthenticationServiceException(ErrorNumber.UNKNOWN_ERROR, e.getMessage());
+    			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_INVALID_SIGNATURE, e.getMessage());
 		}
 		
 		if(Calendar.getInstance().after(this.payload.expiration))
