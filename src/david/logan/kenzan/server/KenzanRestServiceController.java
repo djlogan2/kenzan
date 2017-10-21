@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,7 +45,7 @@ public class KenzanRestServiceController {
 
 	@RequestMapping(value = "/add_emp", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ADD_EMP')")
-	public ErrorResponse add_emp(@RequestBody Employee newEmployee)
+	public ErrorResponse add_emp(@Validated @RequestBody Employee newEmployee)
 	{
 		int id = dbDAO.addEmployee(newEmployee);
 		if(id == -1)
@@ -65,8 +66,11 @@ public class KenzanRestServiceController {
 	
 	@RequestMapping(value = "/update_emp", method = RequestMethod.POST)	
 	@PreAuthorize("hasRole('UPDATE_EMP')")
-	public ErrorResponse update_emp(@RequestBody Employee updatedEmployee)
+	public ErrorResponse update_emp(@Validated @RequestBody Employee updatedEmployee)
 	{
+		if(updatedEmployee.isIdNull())
+			return new ErrorResponse(ErrorNumber.CANNOT_INSERT_MISSING_FIELDS, "No records updated");
+		
 		if(dbDAO.updateEmployee(updatedEmployee))
 			return new ErrorResponse(updatedEmployee.getId());
 		else
@@ -74,7 +78,7 @@ public class KenzanRestServiceController {
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public LoginResponse login(@RequestBody Login login)
+	public LoginResponse login(@Validated @RequestBody Login login)
 	{
 		LoginResponse resp = new LoginResponse();
 		Employee e = dbDAO.getEmployeeByUsername(login.username, login.password);
@@ -100,7 +104,7 @@ public class KenzanRestServiceController {
 	}
 	
 	@RequestMapping(value = "/set_password", method = RequestMethod.POST)
-	public ErrorResponse updatePassword(@RequestBody Login login)
+	public ErrorResponse updatePassword(@Validated @RequestBody Login login)
 	{
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

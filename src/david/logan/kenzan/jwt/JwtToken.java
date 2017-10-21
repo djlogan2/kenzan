@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import david.logan.kenzan.db.Employee;
 import david.logan.kenzan.db.EmployeeRole;
@@ -56,7 +57,19 @@ public class JwtToken {
 		try {
 			this.header = mapper.readValue(header,  Header.class);
 			this.payload = mapper.readValue(payload,  Payload.class);
+			if(this.header == null || this.payload == null)
+				throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_PARSE_ERROR);
 		} catch (IOException e1) {
+			if(e1 instanceof InvalidFormatException)
+			{
+				InvalidFormatException ife = (InvalidFormatException)e1;
+				if(ife.getPath().get(0).getFieldName().equals("atIssued"))
+						throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_ISSUED);
+				else if(ife.getPath().get(0).getFieldName().equals("exp"))
+					throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_PAYLOAD_INVALID_EXPIRATION);
+				else
+					throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_PARSE_ERROR, e1.getMessage());
+			}
 			throw new JWTAuthenticationServiceException(ErrorNumber.INVALID_AUTHORIZATION_TOKEN_PARSE_ERROR);
 		}
 		

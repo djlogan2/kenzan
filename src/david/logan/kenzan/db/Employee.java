@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
@@ -33,19 +34,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Employee {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	//@NotNull
+	private Integer id;
 
 	@Column(nullable = false)
+	@NotNull
 	private String firstName;
 	
 	@Column(nullable = true)
 	private Character middleInitial;
 	
 	@Column(nullable = false)
+	@NotNull
 	private String lastName;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, timezone="America/Denver")
 	@Column(nullable = false)
+	@NotNull
 	private Calendar dateOfBirth;
 	
 	@Column(nullable = true)
@@ -53,9 +58,11 @@ public class Employee {
 	private Calendar dateOfEmployment;
 	
 	@Column(nullable = false)
+	@NotNull
 	private Status bStatus;
 	
 	@Column(nullable = false)
+	@NotNull
 	private String username;
 
 	@JsonIgnore
@@ -93,7 +100,7 @@ public class Employee {
 	public Character getMiddleInitial() {
 		return middleInitial;
 	}
-	public void setMiddleInitial(char middleInitial) {
+	public void setMiddleInitial(Character middleInitial) {
 		this.middleInitial = middleInitial;
 	}
 	public String getLastName() {
@@ -157,5 +164,9 @@ public class Employee {
 				other.id == this.id
 				// Should we check other fields?
 				);
+	}
+
+	public boolean isIdNull() {
+		return (id == null);
 	}
 }

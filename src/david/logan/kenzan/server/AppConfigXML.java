@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -15,6 +18,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 //
 // Spring configuration, replacing the old XML configuration file
@@ -28,7 +34,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan("david.logan.kenzan.db")
 //It should work to prevent us from needing a DataSource bean, but it isn't working.
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-public class AppConfigXML {
+public class AppConfigXML implements InitializingBean {
+	@Autowired
+    private RequestMappingHandlerAdapter converter;
+	
 	@Bean
 	public JpaTransactionManager jpaTransMan(){
 		JpaTransactionManager jtManager = new JpaTransactionManager(entityManager().getObject());
@@ -87,4 +96,15 @@ public class AppConfigXML {
 	}
 	
 	private Properties additionalProperties() { return properties; }
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+	        MappingJackson2HttpMessageConverter httpMessageConverter = converter.getMessageConverters().stream()
+	                .filter(mc -> mc.getClass().equals(MappingJackson2HttpMessageConverter.class))
+	                .map(mc -> (MappingJackson2HttpMessageConverter)mc)
+	                .findFirst()
+	                .get();
+
+	        httpMessageConverter.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 }
