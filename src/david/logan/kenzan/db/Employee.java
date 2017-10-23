@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 //
 //	The employee class. It contains the business requirements, along with
@@ -35,6 +36,7 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	//@NotNull
+	@JsonProperty("_id")
 	private Integer id;
 
 	@Column(nullable = false)
