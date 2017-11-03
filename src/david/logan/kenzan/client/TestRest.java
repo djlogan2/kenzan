@@ -37,6 +37,7 @@ public class TestRest {
 		e.setLastName(prefix + " lastname " + testno);
 		e.setMiddleInitial('M');
 		e.setUsername(prefix + testno);
+		e.setEmail(prefix + testno + "@kenzan.com");
 		e.setPassword("testpassword");
 		return e;
 	}

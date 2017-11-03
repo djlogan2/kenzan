@@ -67,6 +67,10 @@ public class Employee {
 	@NotNull
 	private String username;
 
+	@Column(nullable = false)
+	@NotNull
+	private String email;
+
 	@JsonIgnore
 	private String password;
 	
@@ -170,5 +174,13 @@ public class Employee {
 
 	public boolean isIdNull() {
 		return (id == null);
+	}
+
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

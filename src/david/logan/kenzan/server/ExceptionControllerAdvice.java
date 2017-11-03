@@ -59,12 +59,14 @@ public class ExceptionControllerAdvice {
 	public @ResponseBody ErrorResponse exception5(HttpMessageNotReadableException e)
 	{
 		System.out.println("5: " + e.getLocalizedMessage() + "," + e.getMessage());
+		//if(e.getCause() != null && (e.getCause() instanceof HttpMessageNotReadableException))
+		//	return new ErrorResponse(ErrorNumber.CANNOT_INSERT_MISSING_FIELDS, e.getMessage());
 		if( e.getCause() == null || !(e.getCause() instanceof UnrecognizedPropertyException) )
 			if(e.getMessage().contains("Required request body is missing"))
 				if(e.getMessage().contains("jwt.Login"))
 					return new ErrorResponse(ErrorNumber.INVALID_USERNAME_OR_PASSWORD, e.getMessage());
 				else
-					return new ErrorResponse(ErrorNumber.UNKNOWN_ERROR, "Some other body is missing: " + e.getMessage());
+					return new ErrorResponse(ErrorNumber.CANNOT_INSERT_MISSING_FIELDS, "Some other body is missing: " + e.getMessage());
 			else
 				return new ErrorResponse(ErrorNumber.UNKNOWN_ERROR, "Not a missing property, not a missing response body: " + e.getMessage());
 

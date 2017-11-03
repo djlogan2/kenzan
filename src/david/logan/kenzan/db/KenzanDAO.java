@@ -88,6 +88,7 @@ public class KenzanDAO {
 		newEmployee.setLastName(e.getLastName());
 		newEmployee.setMiddleInitial(e.getMiddleInitial());
 		newEmployee.setUsername(e.getUsername());
+		newEmployee.setEmail(e.getEmail());
 		entityManager.persist(newEmployee);
 		entityManager.flush();
 		return newEmployee.getId();
@@ -109,6 +110,7 @@ public class KenzanDAO {
 			exists.setLastName(e.getLastName());
 			exists.setMiddleInitial(e.getMiddleInitial());
 			exists.setUsername(e.getUsername());
+			exists.setEmail(e.getEmail());
 			entityManager.merge(exists);
 			return true;
 		} catch(NoResultException ee)
