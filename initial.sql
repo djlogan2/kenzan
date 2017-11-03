@@ -31,9 +31,9 @@ $$
 CREATE TRIGGER VerifyEmployeeUpdate BEFORE UPDATE ON employee
   FOR EACH ROW
     BEGIN
-      IF OLD.bStatus = 0 THEN
+      IF NEW.bStatus = 0 THEN
         BEGIN
-          IF (SELECT COUNT(1) FROM employee WHERE OLD.username = employee.username AND employee.id <> OLD.id and employee.bStatus = 0) > 0 THEN
+          IF (SELECT COUNT(1) FROM employee WHERE NEW.username = employee.username AND employee.id <> NEW.id and employee.bStatus = 0) > 0 THEN
             SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Unable to insert duplicate username';
           END IF;
         END;
